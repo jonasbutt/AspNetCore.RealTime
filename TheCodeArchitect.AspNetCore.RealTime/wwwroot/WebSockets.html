@@ -3,8 +3,53 @@
 <head>
     <meta charset="utf-8" />
     <title>ASP.NET Core WebSockets Example</title>
+    <script type="text/javascript">
+
+        var webSocket = openWebSocketConnection();
+
+        webSocket.onopen = function () {
+            console.log('CONNECTION OPENED');
+        };
+
+        webSocket.onerror = function (event) {
+            console.log('ERROR: ' + event);
+        };
+
+        webSocket.onmessage = function (event) {
+            console.log('MESSAGE: ' + event.data);
+        };
+
+        webSocket.onclose = function (event) {
+            console.log('CONNECTION CLOSED: ' + event.code, event.reason);
+        }
+
+        window.addEventListener('beforeunload', function () {
+            webSocket.close();
+        });
+
+        function openWebSocketConnection() {
+            var connectionUrl = getWebSocketConnectionUrl();
+            return new WebSocket(connectionUrl);
+        }
+
+        function getWebSocketConnectionUrl() {
+            var scheme = document.location.protocol === "https:" ? "wss" : "ws";
+            var port = document.location.port ? (":" + document.location.port) : "";
+            return scheme + "://" + document.location.hostname + port + "/ws";
+        }
+
+        setInterval(sendMessage, 2000);
+
+        function sendMessage() {
+            if (webSocket.readyState !== WebSocket.OPEN) {
+                console.log('NOT CONNECTED');
+                return;
+            }
+            webSocket.send('REQUEST_RATE_BTCEUR');
+        }
+
+    </script>
 </head>
 <body>
-
 </body>
 </html>

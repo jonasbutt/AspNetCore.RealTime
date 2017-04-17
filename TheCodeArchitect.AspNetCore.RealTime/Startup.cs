@@ -23,9 +23,9 @@ namespace TheCodeArchitect.AspNetCore.RealTime
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseWebSockets();
             app.UseStaticFiles();
             app.UseMvc();
-            app.UseWebSockets();
         }
     }
 }

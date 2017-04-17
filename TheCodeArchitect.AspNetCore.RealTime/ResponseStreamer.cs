@@ -12,6 +12,8 @@ namespace TheCodeArchitect.AspNetCore.RealTime
 
     public class ResponseStreamer : IResponseStreamer
     {
+        private const string EventStreamContentType = "text/event-stream";
+
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public ResponseStreamer(IHttpContextAccessor httpContextAccessor)
@@ -25,10 +27,10 @@ namespace TheCodeArchitect.AspNetCore.RealTime
             var requestCancellationToken = _httpContextAccessor.HttpContext.RequestAborted;
             var eventStreamRequested =
                 _httpContextAccessor.HttpContext.Request.Headers.TryGetValue("Accept", out var acceptHeader)
-                && acceptHeader == "text/event-stream";
+                && acceptHeader == EventStreamContentType;
             try
             {
-                response.Headers.Add("Content-Type", "text/event-stream");
+                response.Headers.Add("Content-Type", EventStreamContentType);
                 await stream(
                     async message =>
                     {
