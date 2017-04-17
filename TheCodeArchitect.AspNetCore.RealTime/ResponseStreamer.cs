@@ -39,7 +39,6 @@ namespace TheCodeArchitect.AspNetCore.RealTime
                         await response.Body.FlushAsync(requestCancellationToken);
                     },
                     requestCancellationToken);
-
             }
             catch (TaskCanceledException)
             {

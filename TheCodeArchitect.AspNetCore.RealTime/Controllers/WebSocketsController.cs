@@ -26,21 +26,22 @@ namespace TheCodeArchitect.AspNetCore.RealTime.Controllers
         public async Task Get()
         {
             var webSocketManager = _httpContextAccessor.HttpContext.WebSockets;
-            if (webSocketManager.IsWebSocketRequest)
+            if (webSocketManager.IsWebSocketRequest == false)
             {
-                var webSocket = await webSocketManager.AcceptWebSocketAsync();
-                var connectionOpen = true;
-                while (connectionOpen)
+                return;
+            }
+            var webSocket = await webSocketManager.AcceptWebSocketAsync();
+            var connectionOpen = true;
+            while (connectionOpen)
+            {
+                (var connectionClosed, var message) = await ReceiveMessage(webSocket);
+                connectionOpen = connectionClosed == false;
+                if (message == "REQUEST_RATE_BTCEUR")
                 {
-                    (var connectionClosed, var message) = await ReceiveMessage(webSocket);
-                    connectionOpen = connectionClosed == false;
-                    if (message == "REQUEST_RATE_BTCEUR")
-                    {
-                        var btcEuroRate = await _bitcoinRatesService.RetrieveBtcEuroRate(CancellationToken.None);
-                        var responseMessage = $"{DateTime.UtcNow} BTC = {btcEuroRate} EUR";
-                        var responseBuffer = Encoding.UTF8.GetBytes(responseMessage);
-                        await webSocket.SendAsync(new ArraySegment<byte>(responseBuffer), WebSocketMessageType.Text, true, CancellationToken.None);
-                    }
+                    var btcEuroRate = await _bitcoinRatesService.RetrieveBtcEuroRate(CancellationToken.None);
+                    var responseMessage = $"{DateTime.UtcNow} BTC = {btcEuroRate} EUR";
+                    var responseBuffer = Encoding.UTF8.GetBytes(responseMessage);
+                    await webSocket.SendAsync(new ArraySegment<byte>(responseBuffer), WebSocketMessageType.Text, true, CancellationToken.None);
                 }
             }
         }
