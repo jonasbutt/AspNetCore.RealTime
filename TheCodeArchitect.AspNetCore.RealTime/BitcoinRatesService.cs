@@ -28,7 +28,8 @@ namespace TheCodeArchitect.AspNetCore.RealTime
                 JObject.Parse(btcRates)
                     .Children()
                     .First(c => c.Path == "EUR")
-                    .First.Value<decimal>("buy");
+                    .First
+                    .Value<decimal>("buy");
         }
     }
 }
