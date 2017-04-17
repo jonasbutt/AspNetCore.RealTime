@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>ASP.NET Core Server-Sent Events Example</title>
+    <script type="text/javascript">
+
+        var eventSource = new EventSource('sse');
+
+        eventSource.onopen = function () {
+            console.log('CONNECTION OPENED');
+        };
+
+        eventSource.onerror = function (event) {
+            console.log('ERROR: ' + event);
+        };
+
+        eventSource.onmessage = function (event) {
+            console.log('MESSAGE: ' + event.data);
+        };
+
+        eventSource.onclose = function (code, reason) {
+            console.log('CONNECTION CLOSED: ' + code, reason);
+        }
+
+        window.addEventListener('beforeunload', function () {
+            eventSource.close();
+        });
+
+    </script>
+</head>
+<body>
+</body>
+</html>
